@@ -4,14 +4,35 @@ const Header = ({ text }) => <h2>{text}</h2>;
 
 const Button = ({ text, onClick }) => <button onClick={onClick}>{text}</button>;
 
-const Statistics = ({ goodStats, neutralStats, badStats }) => {
+const StatisticsLine = ({ text, value }) => {
   return (
-    <div>
-      <p>good = {goodStats}</p>
-      <p>neutral = {neutralStats}</p>
-      <p>bad = {badStats}</p>
-    </div>
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
   );
+};
+
+const Statistics = ({ goodStats, neutralStats, badStats }) => {
+  const totalStatsCollected = goodStats + neutralStats + badStats;
+  const positiveStatsPercentage = (goodStats / totalStatsCollected) * 100;
+  const averageScore =
+    Math.round(((goodStats - badStats) / (goodStats + badStats)) * 100) / 100;
+
+  if (totalStatsCollected > 0)
+    return (
+      <table>
+        <tbody>
+          <StatisticsLine text='good' value={goodStats} />
+          <StatisticsLine text='neutral' value={neutralStats} />
+          <StatisticsLine text='bad' value={badStats} />
+          <StatisticsLine text='all' value={totalStatsCollected} />
+          <StatisticsLine text='average' value={averageScore} />
+          <StatisticsLine text='positive % ' value={positiveStatsPercentage} />
+        </tbody>
+      </table>
+    );
+  else return <p>No feedback given</p>;
 };
 
 const App = () => {
