@@ -1,65 +1,39 @@
-import React from 'react'
+import React, { useState } from 'react';
 
-const Header = (props) => {
-  return(
-    <h2>
-    {props.courseName}
-    </h2>
-  )
-}
+const History = (props) => {
+  if (props.allClicks.length === 0) {
+    return <div>the app is used by pressing the buttons</div>;
+  }
+  return <div>button press history: {props.allClicks.join(' ')}</div>;
+};
 
-const Part = (props) => {
-  return (
-    <p>
-    {props.partName} {props.numberOfExercises}
-    </p>
-  )
-}
-
-const Content = (props) => {
-  return(
-    <div>
-      <Part partName={props.parts[0].name} numberOfExercises={props.parts[0].exercises} />
-      <Part partName={props.parts[1].name} numberOfExercises={props.parts[1].exercises}/>
-      <Part partName={props.parts[2].name} numberOfExercises={props.parts[2].exercises} />
-    </div>
-  )
-}
-
-const Total = (props) => {
-  return(
-    <p>
-    Total number of exercises = {props.parts.map(part => part.exercises).reduce((prev,next) => prev + next)}
-    </p>
-  )
-}
+const Button = ({ handleClick, text }) => (
+  <button onClick={handleClick}>{text}</button>
+);
 
 const App = () => {
-  const course = {
-    name: 'Half Stack application development',
-    parts: [
-      {
-        name: 'Fundamentals of React',
-        exercises: 10
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7
-      },
-      {
-        name: 'State of a component',
-        exercises: 14
-      }
-    ]
-  }
+  const [left, setLeft] = useState(0);
+  const [right, setRight] = useState(0);
+  const [allClicks, setAll] = useState([]);
+
+  const handleLeftClick = () => {
+    setAll(allClicks.concat('L'));
+    setLeft(left + 1);
+  };
+
+  const handleRightClick = () => {
+    setAll(allClicks.concat('R'));
+    setRight(right + 1);
+  };
 
   return (
     <div>
-     <Header courseName={course.name} />
-     <Content parts={course.parts} />
-     <Total parts={course.parts} />
+      {left}
+      <Button handleClick={handleLeftClick} text='left'></Button>
+      <Button handleClick={handleRightClick} text='right'></Button>
+      {right}
+      <History allClicks={allClicks} />
     </div>
-  )
-}
-
-export default App
+  );
+};
+export default App;
