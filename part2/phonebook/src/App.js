@@ -6,10 +6,32 @@ const App = () => {
     {
       name: 'Arto Hellas',
       number: '778-123-4567',
+      id: 1,
+    },
+    {
+      name: 'Harry Potter',
+      number: '778-141-4533',
+      id: 2,
+    },
+    {
+      name: 'Remus Lupin',
+      number: '604-721-5347',
+      id: 3,
+    },
+    {
+      name: 'Sirius Black',
+      number: '403-771-7448',
+      id: 4,
+    },
+    {
+      name: 'Jean Ralphio',
+      number: '443-221-2243',
+      id: 5,
     },
   ]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
+  const [newSearch, setNewSearch] = useState('');
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -21,6 +43,7 @@ const App = () => {
       const personObject = {
         name: newName,
         number: newNumber,
+        id: persons.length + 1,
       };
 
       setPersons(persons.concat(personObject));
@@ -36,24 +59,44 @@ const App = () => {
     setNewNumber(event.target.value);
   };
 
+  const handleNewSearchChange = (event) => {
+    setNewSearch(event.target.value);
+  };
+
+  const personsToShow =
+    newSearch === ''
+      ? persons
+      : persons.filter((person) =>
+          person.name.toLowerCase().includes(newSearch.toLowerCase())
+        );
+
   return (
     <div>
-      <h2>Phonebook</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={handleNewNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNewNumberChange} />
-        </div>
-        <div>
-          <button type='submit'>add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {persons.map((person) => (
-        <Person key={person.name} name={person.name} number={person.number} />
-      ))}
+      <div>
+        <h2>Phonebook</h2>
+        <span>search for contact </span>{' '}
+        <input value={newSearch} onChange={handleNewSearchChange} />
+      </div>
+      <div>
+        <h2>add a new contact</h2>
+        <form onSubmit={addPerson}>
+          <div>
+            name: <input value={newName} onChange={handleNewNameChange} />
+          </div>
+          <div>
+            number: <input value={newNumber} onChange={handleNewNumberChange} />
+          </div>
+          <div>
+            <button type='submit'>add</button>
+          </div>
+        </form>
+      </div>
+      <div>
+        <h2>Numbers</h2>
+        {personsToShow.map((person) => (
+          <Person key={person.id} name={person.name} number={person.number} />
+        ))}
+      </div>
     </div>
   );
 };
