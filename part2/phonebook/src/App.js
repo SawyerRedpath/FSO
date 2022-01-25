@@ -1,4 +1,4 @@
-import axios from 'axios';
+import personService from './services/persons';
 import React, { useState, useEffect } from 'react';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
@@ -11,10 +11,8 @@ const App = () => {
   const [newSearch, setNewSearch] = useState('');
 
   useEffect(() => {
-    console.log('effect');
-    axios.get('http://localhost:3001/persons').then((response) => {
-      console.log('promise fulfilled');
-      setPersons(response.data);
+    personService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
     });
   }, []);
 
@@ -31,13 +29,11 @@ const App = () => {
         id: persons.length + 1,
       };
 
-      axios
-        .post('http://localhost:3001/persons', personObject)
-        .then((response) => {
-          setPersons(persons.concat(response.data));
-          setNewName('');
-          setNewNumber('');
-        });
+      personService.create(personObject).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName('');
+        setNewNumber('');
+      });
     }
   };
 
