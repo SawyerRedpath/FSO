@@ -16,7 +16,7 @@ const App = () => {
       console.log('promise fulfilled');
       setPersons(response.data);
     });
-  });
+  }, []);
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -31,8 +31,13 @@ const App = () => {
         id: persons.length + 1,
       };
 
-      setPersons(persons.concat(personObject));
-      setNewName('');
+      axios
+        .post('http://localhost:3001/persons', personObject)
+        .then((response) => {
+          setPersons(persons.concat(response.data));
+          setNewName('');
+          setNewNumber('');
+        });
     }
   };
 
