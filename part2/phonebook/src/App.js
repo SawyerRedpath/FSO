@@ -3,12 +3,14 @@ import React, { useState, useEffect } from 'react';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
+import Notification from './components/Notification';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [newSearch, setNewSearch] = useState('');
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((initialPersons) => {
@@ -27,6 +29,11 @@ const App = () => {
       setPersons(persons.concat(returnedPerson));
       setNewName('');
       setNewNumber('');
+      setSuccessMessage(`${returnedPerson.name} added to contacts`);
+
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 5000);
     });
   };
 
@@ -40,6 +47,11 @@ const App = () => {
         setPersons(
           persons.map((person) => (person.id !== id ? person : returnedPerson))
         );
+        setSuccessMessage(`${returnedPerson.name} phone number updated`);
+
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 5000);
       })
       .catch((error) => {
         alert(
@@ -103,6 +115,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage} />
       <Filter value={newSearch} handleNewSearchChange={handleNewSearchChange} />
       <h3>add a new contact</h3>
       <PersonForm
