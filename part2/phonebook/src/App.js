@@ -16,24 +16,54 @@ const App = () => {
     });
   }, []);
 
-  const addPerson = (event) => {
+  const addPerson = () => {
+    const personObject = {
+      name: newName,
+      number: newNumber,
+      id: persons.length + 1,
+    };
+
+    personService.create(personObject).then((returnedPerson) => {
+      setPersons(persons.concat(returnedPerson));
+      setNewName('');
+      setNewNumber('');
+    });
+  };
+
+  const updatePerson = (id) => {
+    const person = persons.find((p) => p.id === id);
+    const changedPerson = { ...person, number: newNumber };
+
+    personService
+      .update(person.id, changedPerson)
+      .then((returnedPerson) => {
+        setPersons(
+          persons.map((person) => (person.id !== id ? person : returnedPerson))
+        );
+      })
+      .catch((error) => {
+        alert(
+          `the person '${person.name}' was already deleted from the server`
+        );
+        setPersons(persons.filter((p) => p.id !== id));
+      });
+  };
+
+  const addPersonOrUpdateNumber = (event) => {
     event.preventDefault();
 
     // Check if the person already exists
-    if (persons.some((person) => person['name'] === newName)) {
-      alert(`${newName} already exists in the phonebook`);
-    } else {
-      const personObject = {
-        name: newName,
-        number: newNumber,
-        id: persons.length + 1,
-      };
+    const foundPerson = persons.find((person) => person.name === newName);
 
-      personService.create(personObject).then((returnedPerson) => {
-        setPersons(persons.concat(returnedPerson));
-        setNewName('');
-        setNewNumber('');
-      });
+    if (foundPerson === undefined) {
+      addPerson();
+    } else {
+      if (
+        window.confirm(
+          `${newName} is already added to the phonebook, would you like to replace the old number with a new one?`
+        )
+      )
+        updatePerson(foundPerson.id);
     }
   };
 
@@ -76,7 +106,7 @@ const App = () => {
       <Filter value={newSearch} handleNewSearchChange={handleNewSearchChange} />
       <h3>add a new contact</h3>
       <PersonForm
-        addPerson={addPerson}
+        addPersonOrUpdateNumber={addPersonOrUpdateNumber}
         newName={newName}
         handleNewNameChange={handleNewNameChange}
         newNumber={newNumber}
